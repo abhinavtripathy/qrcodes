@@ -1,0 +1,15 @@
+<html>
+
+<div id="qrcode"></div>
+
+
+</html>
+<script src="node_modules/easyqrcodejs/src/easy.qrcode.js"></script>
+<script>
+
+var qrcode = new QRCode(document.getElementById("qrcode"), {
+    text: "https://pollsyeverywhere.com",
+    logo: "alogo.png"
+});
+
+</script>

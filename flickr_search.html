@@ -1,0 +1,108 @@
+<html>
+
+<body>
+<div class="container">
+
+    <div id="content">
+
+        <center><input id="search" type="text" placeholder=" search for flickr photos!" /></center>
+        <br>
+        <div id="outputDiv"></div>
+    </div>
+
+</body>
+
+</html>
+
+<style>
+   
+
+    .container {
+        width: 985px;
+        margin: auto;
+        color: #FFF;
+        font-size: 25px;
+    }
+
+    #content {
+        border: dashed 2px #CCC;
+        padding: 10px;
+    }
+
+    #search {
+
+        border: 2px solid blue;
+        border-radius: 7px;
+
+    }
+
+    #search:focus {
+        background-color: #3CBC8D;
+
+    }
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script>
+    $("#search").on('keyup', function (e) {
+        
+
+        document.getElementById("outputDiv").innerHTML = "";
+
+        var flickerAPI = "https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=4e258a4396bf5ba0448b2e2fe574034e&tags=" 
+        var endURI = "&format=json&nojsoncallback=1";
+
+        $.getJSON(flickerAPI + $("#search").val() + endURI, {
+        }).done(function (result, status, xhr) {
+        
+        for(var i = 0; i < 7; i++) {
+            var farmID = result['photos']['photo'][i]['farm'];
+            var id = result['photos']['photo'][i]['id'];
+            var secret = result['photos']['photo'][i]['secret'];
+            var server = result['photos']['photo'][i]['server'];
+            var size = "s";
+        
+
+            var imageURL = "https://farm" + farmID + ".staticflickr.com" + "/" + server + "/" + id + "_" + secret + "_" + size + ".jpg";
+            // console.log(imageURL)
+
+
+            var flickerGetInfo = "https://www.flickr.com/services/rest/?method=flickr.photos.getInfo&api_key=4e258a4396bf5ba0448b2e2fe574034e&photo_id=";
+            var getinfoEnd = "&format=json&nojsoncallback=1";
+
+            $.getJSON(flickerGetInfo + id + getinfoEnd, {
+            }).done(function(result, status, xhr){
+
+                // console.log(result["photo"]["views"])
+                
+
+            }).fail(function (xhr, status, error) {
+                console.log("error")
+            });
+
+
+            var img = $("<img>").attr("src", imageURL).appendTo("#outputDiv");
+            
+            
+            var leftpos = img.position().left;
+            var toppos = img.position().top;
+            var newDiv = document.createElement('div');
+            newDiv.style.position = 'absolute';
+            var imgSize = img.height() / 3;
+            newDiv.style.top = toppos + imgSize + "px";
+            newDiv.style.left = leftpos + imgSize + "px";
+            newDiv.style.color = "black";
+            newDiv.innerHTML = '0';
+            document.getElementById("outputDiv").appendChild(newDiv)
+
+            
+        }
+            
+        }).fail(function (xhr, status, error) {
+            console.log("error")
+            alert("Result: " + status + " " + error + " " + xhr.status + " " + xhr.statusText)
+        });
+
+        
+    });
+
+</script>
